@@ -35,24 +35,34 @@ The Criteria of features:
 7. An empty date parameter should return the current time in a JSON object with a utc key
 */
 
-app.get("/api/:date?", function(req, res){
+app.get("/api/:date?", function(req, res) {
   let date = req.params.date;
-  if(date){
-    if(isNaN(date)){
+
+  if (date) {
+    if (isNaN(date)) {
+      // If date is not a number, parse it as a date string
       date = new Date(date);
-      if(date == "Invalid Date"){
-        res.json({error: "Invalid Date"});
-      }else{
-        res.json({unix: date.getTime(), utc: date.toUTCString()});
+
+      if (date == "Invalid Date") {
+        // If the parsed date is invalid, return an error response
+        res.json({ error: "Invalid Date" });
+      } else {
+        // If the parsed date is valid, return the Unix timestamp and UTC string
+        res.json({ unix: date.getTime(), utc: date.toUTCString() });
       }
-    }else{
+    } else {
+      // If date is a number, parse it as a Unix timestamp
       date = new Date(parseInt(date));
-      res.json({unix: date.getTime(), utc: date.toUTCString()});
+
+      // Return the Unix timestamp and UTC string
+      res.json({ unix: date.getTime(), utc: date.toUTCString() });
     }
-  }else{
-    res.json({unix: Date.now(), utc: new Date().toUTCString()});
+  } else {
+    // If no date parameter is provided, return the current time
+    res.json({ unix: Date.now(), utc: new Date().toUTCString() });
   }
 });
+
 
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function () {
